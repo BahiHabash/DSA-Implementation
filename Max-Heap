@@ -1,0 +1,109 @@
+class MaxHeap {
+  #heap; // Private property to store the heap array
+
+  constructor() {
+    this.#heap = []; 
+  }
+
+  #parent(i) { 
+    // Calculate the index of the parent node 
+    return Math.floor((i - 1) / 2); 
+  }
+
+  #leftChild(i) { 
+    // Calculate the index of the left child node
+    return 2 * i + 1; 
+  }
+
+  #rightChild(i) { 
+    // Calculate the index of the right child node
+    return 2 * i + 2; 
+  }
+
+  #heapifyUp(i) { 
+    // Maintain the max-heap property by moving an element up the tree
+    while (i > 0 && this.#heap[i] > this.#heap[this.#parent(i)]) { 
+      this.#swap(i, this.#parent(i)); 
+      i = this.#parent(i);
+    }
+  }
+
+  #swap(i, j) { 
+    // Swap the values at the given indices
+    [this.#heap[i], this.#heap[j]] = [this.#heap[j], this.#heap[i]]; 
+  }
+
+  #heapifyDown(i) { 
+    // Maintain the max-heap property by moving an element down the tree
+    let largest = i;
+    const left = this.#leftChild(i);
+    const right = this.#rightChild(i);
+
+    if (left < this.size() && this.#heap[left] > this.#heap[largest]) {
+      largest = left;
+    }
+
+    if (right < this.size() && this.#heap[right] > this.#heap[largest]) {
+      largest = right;
+    }
+
+    if (largest !== i) {
+      this.#swap(i, largest);
+      this.#heapifyDown(largest);
+    }
+  }
+
+  insert(value) { 
+    // Insert a new value into the heap
+    this.#heap.push(value);
+    this.#heapifyUp(this.size() - 1); 
+    return this; 
+  }
+
+  insertArray(arr) { 
+    // Insert an array of values into the heap
+    arr.forEach(val => this.insert(val));
+    return this;
+  }
+
+  extractMax() { 
+    // Remove and return the maximum value (root) from the heap
+    if (this.size() === 0) {
+      return null; 
+    }
+
+    if (this.size() === 1) {
+      return this.#heap.pop(); 
+    }
+
+    const max = this.#heap[0];
+    this.#heap[0] = this.#heap.pop();
+    this.#heapifyDown(0);
+    return max;
+  }
+
+  internal() {
+      // return the internal heap array
+      return this.#heap;
+  }
+
+  peek() { 
+    // Return the maximum value (root) without removing it
+    return this.size() > 0 ? this.#heap[0] : null; 
+  }
+
+  size() { 
+    // Return the number of elements in the heap
+    return this.#heap.length; 
+  }
+}
+
+// Example usage:
+const maxHeap = new MaxHeap();
+maxHeap.insertArray([10, 5, 15, 3, 8, 20]); 
+
+console.log("Internal MaxHeap:", maxHeap.internal());
+console.log("Peek:", maxHeap.peek()); 
+console.log("Extracted:", maxHeap.extractMax());
+console.log("Internal MaxHeap after extraction:", maxHeap.internal());
+console.log("Peek after extraction:", maxHeap.peek());
